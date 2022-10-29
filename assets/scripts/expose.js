@@ -13,9 +13,10 @@ function init() {
   document.getElementById("horn-select").addEventListener('change', updateSound);
 
   // Alter the page to reflect the user's selection
-  document.getElementById("volume").addEventListener('click', updateVolume);
+  document.getElementById("volume").addEventListener('change', updateVolume);
   
-  
+  // Play the selected sound when the button is pressed
+  document.querySelector("button").addEventListener('click', playSound);
 
 }
 
@@ -73,7 +74,7 @@ function updateVolume(){
       snd.volume = vol / 100.0;
       img.setAttribute("src", "assets/icons/volume-level-2.svg");
       break;
-    case vol < 100:
+    case vol < 101:
       snd.volume = vol / 100.0;
       img.setAttribute("src", "assets/icons/volume-level-3.svg");
       break;
@@ -85,3 +86,7 @@ function updateVolume(){
   console.log(snd.volume);
 }
 
+// play selected sound
+function playSound(){
+  document.querySelector("audio").play();
+}
