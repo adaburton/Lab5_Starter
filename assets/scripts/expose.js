@@ -1,9 +1,11 @@
 // expose.js
-
 window.addEventListener('DOMContentLoaded', init);
+const jsConfetti = new JSConfetti();
 
 function init() {
   console.log("loaded!");
+  
+  
 
   //initialize everything.
   updateSound();
@@ -89,4 +91,10 @@ function updateVolume(){
 // play selected sound
 function playSound(){
   document.querySelector("audio").play();
+
+  // If the party horn is selected, throw confetti
+  if(document.getElementById("horn-select").value == "party-horn"){
+    jsConfetti.addConfetti();
+  }
+
 }
