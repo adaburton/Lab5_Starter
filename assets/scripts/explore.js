@@ -1,36 +1,65 @@
 // explore.js
 
 window.addEventListener('DOMContentLoaded', init);
-window.speechSynthesis.addEventListener('voiceschanged', initVoices);
 
 function init() {
+  let voicesList = [];
+  let testToSpeak = new SpeechSynthesisUtterance();
 
-  // I found this line was necessary for Firefox, 
-  // since the browser doesn't automatically "add"
-  // the voices to the browser, triggering 'voiceschanged'
-  // a la google chrome
-  window.speechSynthesis.getVoices();
+  updateVoiceList();
 
-  document.querySelector("button").addEventListener("click", speak);
+  if (speechSynthesis.onvoiceschanged !== undefined) {
+    speechSynthesis.onvoiceschanged = updateVoiceList;
+  }
 
-}
-
-// initialize voice select
-function initVoices(){
-  let vox = window.speechSynthesis.getVoices();
-  let lst = document.querySelector("select");
-
-  for (let v in vox){
-    console.log(vox[v].name);
-    let opt = document.createElement("option");
-    opt.text = vox[v].name;
-    opt.value = vox[v];
-    lst.appendChild(opt);
-  } 
-}
-
-function speak(){
+  let voiceSelect = document.getElementById('voice-select');
+  //const voices = speechSynthesis.getVoices();
   
+  let button = document.querySelector('button');
+  let text = document.getElementById('text-to-speak');
+  button.addEventListener('click', mySpeak);
+  
+  testToSpeak.onstart = function() {
+    image.src = "assets/images/smiling-open.png";
+  }
+  
+  image.src = "assets/images/smiling.png";
 
+  function updateVoiceList() {
+    let voiceSelect = document.getElementById('voice-select');
 
+    voicesList = speechSynthesis.getVoices();
+
+    for (let i = 0; i < voicesList.length; i++) {
+      const option = document.createElement('option');
+      option.textContent = `${voicesList[i].name} (${voicesList[i].lang})`;
+      option.setAttribute('data-lang', voicesList[i].lang);
+      option.setAttribute('data-name', voicesList[i].name);
+      voiceSelect.appendChild(option);
+    }
+  }
+
+  function mySpeak() {
+    testToSpeak = new SpeechSynthesisUtterance(text.value);
+    const selectedOption = voiceSelect.selectedOptions[0].getAttribute('data-name');
+    
+    for (let i = 0; i < voicesList.length ; i++) {
+      if (voicesList[i].name === selectedOption) {
+        testToSpeak.voice = voicesList[i];
+      }
+    }
+    speechSynthesis.speak(testToSpeak);
+    const image = document.querySelector('img');
+    testToSpeak.onstart = function() {
+      if (speechSynthesis.speaking === true) {
+        image.src = "assets/images/smiling-open.png";
+      }
+    }
+
+    testToSpeak.onend = function() {
+      if (speechSynthesis.speaking === false) {
+        image.src = "assets/images/smiling.png";
+      }
+    }
+  }
 }
